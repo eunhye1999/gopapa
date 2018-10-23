@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import MetaData
 from sqlalchemy.orm import sessionmaker
 import dicttoxml
+import datetime
 
 engine = create_engine('sqlite:///./database.db')
 
@@ -68,7 +69,15 @@ class AirCondition(ServiceBase):
             dictTemp.append(tempData)
         xml = dicttoxml.dicttoxml(dictTemp)
         return xml
+    
+    @rpc(Integer, Unicode, Unicode,  _returns=String)
+    def insertData(ctx, room, temp, humidity):
+        results = engine.execute(
+            f"INSERT INTO aircondition VALUES ({room}, '{datetime.datetime.now()}', {temp}, {humidity})"
+            )
         
+        return "finished"
+
 def create_app(flask_app):
     """Creates SOAP services application and distribute Flask config into
     user con defined context for each method call.
