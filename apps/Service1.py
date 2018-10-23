@@ -11,6 +11,17 @@ import datetime
 
 engine = create_engine('sqlite:///./database.db')
 
+def getResultformDB(results):
+    dictTemp = []
+    for r in results:
+        tempData={}
+        tempData['room_no'] = r[0]
+        tempData['time'] = r[1]
+        tempData['temp'] = r[2]
+        tempData['humidity'] = r[3]
+        dictTemp.append(tempData)
+    return dictTemp
+    
 class AirCondition(ServiceBase):
     
     @rpc(_returns=String)
@@ -28,52 +39,28 @@ class AirCondition(ServiceBase):
     @rpc(_returns=String)
     def getDataDB(ctx):
         results = engine.execute('select * from aircondition')
-        dictTemp = []
-        for r in results:
-            tempData={}
-            tempData['room_no'] = r[0]
-            tempData['time'] = r[1]
-            tempData['temp'] = r[2]
-            tempData['humidity'] = r[3]
-        
-            dictTemp.append(tempData)
+        dictTemp = getResultformDB(results)
         xml = dicttoxml.dicttoxml(dictTemp)
         return xml
 
-    @rpc(Integer, _returns=String)
+    @rpc(Unicode, _returns=String)
     def getDataFormRoom(ctx, room):
         results = engine.execute(f'select * from aircondition where room_no = {room}')
-        dictTemp = []
-        for r in results:
-            tempData={}
-            tempData['room_no'] = r[0]
-            tempData['time'] = r[1]
-            tempData['temp'] = r[2]
-            tempData['humidity'] = r[3]
-        
-            dictTemp.append(tempData)
+        dictTemp = getResultformDB(results)
         xml = dicttoxml.dicttoxml(dictTemp)
         return xml
 
-    @rpc(Unicode,Unicode , _returns=String)
+    @rpc(Unicode, Unicode , _returns=String)
     def getDataDuration(ctx, dateStart, dateEnd):
         results = engine.execute(f"select * from aircondition where time >= '{dateStart}' and time <= '{dateEnd}'")
-        dictTemp = []
-        for r in results:
-            tempData={}
-            tempData['room_no'] = r[0]
-            tempData['time'] = r[1]
-            tempData['temp'] = r[2]
-            tempData['humidity'] = r[3]
-        
-            dictTemp.append(tempData)
+        dictTemp = getResultformDB(results)
         xml = dicttoxml.dicttoxml(dictTemp)
         return xml
     
-    @rpc(Integer, Unicode, Unicode,  _returns=String)
+    @rpc(Unicode, Unicode, Unicode,  _returns=String)
     def insertData(ctx, room, temp, humidity):
         results = engine.execute(
-            f"INSERT INTO aircondition VALUES ({room}, '{datetime.datetime.now()}', {temp}, {humidity})"
+            f"INSERT INTO aircondition VALUES ('{room}', '{datetime.datetime.now()}', '{temp}', '{humidity}')"
             )
         
         return "finished"
