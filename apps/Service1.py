@@ -6,7 +6,7 @@ from spyne.protocol.soap import Soap11
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData
 from sqlalchemy.orm import sessionmaker
-# import dicttoxml
+import dicttoxml
 
 engine = create_engine('sqlite:///./database.db')
 
@@ -36,10 +36,39 @@ class AirCondition(ServiceBase):
             tempData['humidity'] = r[3]
         
             dictTemp.append(tempData)
-        print(dictTemp)
-        return str(dictTemp)
+        xml = dicttoxml.dicttoxml(dictTemp)
+        return xml
 
+    @rpc(Integer, _returns=String)
+    def getDataFormRoom(ctx, room):
+        results = engine.execute(f'select * from aircondition where room_no = {room}')
+        dictTemp = []
+        for r in results:
+            tempData={}
+            tempData['room_no'] = r[0]
+            tempData['time'] = r[1]
+            tempData['temp'] = r[2]
+            tempData['humidity'] = r[3]
+        
+            dictTemp.append(tempData)
+        xml = dicttoxml.dicttoxml(dictTemp)
+        return xml
 
+    @rpc(Unicode,Unicode , _returns=String)
+    def getDataDuration(ctx, dateStart, dateEnd):
+        results = engine.execute(f"select * from aircondition where time >= '{dateStart}' and time <= '{dateEnd}'")
+        dictTemp = []
+        for r in results:
+            tempData={}
+            tempData['room_no'] = r[0]
+            tempData['time'] = r[1]
+            tempData['temp'] = r[2]
+            tempData['humidity'] = r[3]
+        
+            dictTemp.append(tempData)
+        xml = dicttoxml.dicttoxml(dictTemp)
+        return xml
+        
 def create_app(flask_app):
     """Creates SOAP services application and distribute Flask config into
     user con defined context for each method call.
