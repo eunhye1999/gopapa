@@ -42,21 +42,6 @@ class AirCondition(ServiceBase):
     def getmydetail(ctx):
         tree = ET.parse('./apps/student.xml')
         root = tree.getroot()
-        # print(ET.tostring(root))
-        # string ="""
-        # <student>
-        #     <id>5801012610091</id>
-        #     <name>PUNTAKARN KUTPARB</name>
-        #     <hobbits>
-        #         <hobbit>play a game</hobbit>
-        #         <hobbit>watch TV</hobbit>
-        #     </hobbits>
-        #     <sports>
-        #         <sport>football</sport>
-        #         <sport>ping pong</sport>
-        #     </sports>
-        # </student>
-        # """
         my_schema = xmlschema.XMLSchema('./apps/student.xsd')
         if(my_schema.is_valid(root)):
             return ET.tostring(root)
@@ -90,13 +75,28 @@ class AirCondition(ServiceBase):
             f"INSERT INTO aircondition VALUES ('{room}', '{datetime.datetime.now()}', '{temp}', '{humidity}')"
             )
         
-        return "finished"
+        return "<Result>Finish</Result>"
+
+class KerryService(ServiceBase):
+    
+    @rpc(_returns=String)
+    def getDataStored(ctx):
+        return "testttttt"
+
+    @rpc(Unicode, Unicode, Unicode,  _returns=String)
+    def insertItem(ctx, name, address, weight):
+        
+        results = engine.execute(
+            f"INSERT INTO kerrystored ('name','address','weight') VALUES ('{name}', '{address}', '{weight}')"
+            )
+            
+        return "<Result>Finish</Result>"
 
 def create_app(flask_app):
     """Creates SOAP services application and distribute Flask config into
     user con defined context for each method call.
     """
-    application = Application([AirCondition], 'spyne.examples.flask',
+    application = Application([AirCondition,KerryService], 'spyne.examples.flask',
         in_protocol=Soap11(validator='lxml'),
         out_protocol=Soap11(),
     )
