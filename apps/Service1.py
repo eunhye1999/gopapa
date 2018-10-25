@@ -91,7 +91,7 @@ def getResultformDBkerry(results):
     return dictTemp
 
 class KerryService(ServiceBase):
-    
+    # SELECT FUNCTION SQL
     @rpc(_returns=String)
     def getDataStored(ctx):
         results = engine.execute('SELECT * FROM kerrystored ORDER BY status ,no_order')
@@ -99,14 +99,42 @@ class KerryService(ServiceBase):
         xml = dicttoxml.dicttoxml(dictTemp)
         return xml
 
+    @rpc(Unicode, _returns=String)
+    def getlistname(ctx, name):
+        results = engine.execute(f'SELECT * FROM kerrystored WHERE name = "{name}" ORDER BY status ,no_order')
+        dictTemp = getResultformDBkerry(results)
+        xml = dicttoxml.dicttoxml(dictTemp)
+        return xml
+
+    @rpc(Unicode, _returns=String)
+    def getlistadd(ctx, address):
+        results = engine.execute(f'SELECT * FROM kerrystored WHERE address = "{address}" ORDER BY status ,no_order')
+        dictTemp = getResultformDBkerry(results)
+        xml = dicttoxml.dicttoxml(dictTemp)
+        return xml
+
+    @rpc(Unicode, Unicode , _returns=String)
+    def getlistweight(ctx, start, end):
+        results = engine.execute(f"select * from kerrystored where weight >= '{start}' and weight <= '{end}' ORDER BY status ,no_order")
+        dictTemp = getResultformDBkerry(results)
+        xml = dicttoxml.dicttoxml(dictTemp)
+        print(xml)
+        return xml
+
+    # INSERT FUNCTION SQL
+    @rpc(Unicode, _returns=String)
+    def insertSended(ctx, id_order):
+        results = engine.execute(
+            f"UPDATE kerrystored SET status = '1' WHERE no_order = {id_order}"
+            )
+        return "<Result>Finish insertSended</Result>"
+
     @rpc(Unicode, Unicode, Unicode,  _returns=String)
     def insertItem(ctx, name, address, weight):
-        
         results = engine.execute(
             f"INSERT INTO kerrystored ('name','address','weight') VALUES ('{name}', '{address}', '{weight}')"
             )
-
-        return "<Result>Finish</Result>"
+        return "<Result>Finish insertItem</Result>"
 
 def create_app(flask_app):
     """Creates SOAP services application and distribute Flask config into
