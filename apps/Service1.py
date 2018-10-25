@@ -77,11 +77,27 @@ class AirCondition(ServiceBase):
         
         return "<Result>Finish</Result>"
 
+
+def getResultformDBkerry(results):
+    dictTemp = []
+    for r in results:
+        tempData={}
+        tempData['no_order'] = r[0]
+        tempData['name'] = r[1]
+        tempData['address'] = r[2]
+        tempData['weight'] = r[3]
+        tempData['status'] = r[4]
+        dictTemp.append(tempData)
+    return dictTemp
+
 class KerryService(ServiceBase):
     
     @rpc(_returns=String)
     def getDataStored(ctx):
-        return "testttttt"
+        results = engine.execute('SELECT * FROM kerrystored ORDER BY status ,no_order')
+        dictTemp = getResultformDBkerry(results)
+        xml = dicttoxml.dicttoxml(dictTemp)
+        return xml
 
     @rpc(Unicode, Unicode, Unicode,  _returns=String)
     def insertItem(ctx, name, address, weight):
@@ -89,7 +105,7 @@ class KerryService(ServiceBase):
         results = engine.execute(
             f"INSERT INTO kerrystored ('name','address','weight') VALUES ('{name}', '{address}', '{weight}')"
             )
-            
+
         return "<Result>Finish</Result>"
 
 def create_app(flask_app):
