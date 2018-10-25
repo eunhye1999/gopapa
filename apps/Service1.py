@@ -8,6 +8,8 @@ from sqlalchemy import MetaData
 from sqlalchemy.orm import sessionmaker
 import dicttoxml
 import datetime
+import xmlschema
+import xml.etree.ElementTree as ET
 
 engine = create_engine('sqlite:///./database.db')
 
@@ -38,21 +40,28 @@ class AirCondition(ServiceBase):
     
     @rpc(_returns=String)
     def getmydetail(ctx):
-        string ="""
-        <student>
-            <id>5801012610091</id>
-            <name>PUNTAKARN KUTPARB</name>
-            <hobbits>
-                <hobbit>play a game</hobbit>
-                <hobbit>watch TV</hobbit>
-            </hobbits>
-            <sports>
-                <sport>football</sport>
-                <sport>ping pong</sport>
-            </sports>
-        </student>
-        """
-        return string
+        tree = ET.parse('./apps/student.xml')
+        root = tree.getroot()
+        # print(ET.tostring(root))
+        # string ="""
+        # <student>
+        #     <id>5801012610091</id>
+        #     <name>PUNTAKARN KUTPARB</name>
+        #     <hobbits>
+        #         <hobbit>play a game</hobbit>
+        #         <hobbit>watch TV</hobbit>
+        #     </hobbits>
+        #     <sports>
+        #         <sport>football</sport>
+        #         <sport>ping pong</sport>
+        #     </sports>
+        # </student>
+        # """
+        my_schema = xmlschema.XMLSchema('./apps/student.xsd')
+        if(my_schema.is_valid(root)):
+            return ET.tostring(root)
+        else:
+            return "<Error>Error NOT Valid</Error>"
 
     @rpc(_returns=String)
     def getDataDB(ctx):

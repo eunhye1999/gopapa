@@ -1,0 +1,12 @@
+<student>
+    <id>5801012610091</id>
+    <name>PUNTAKARN KUTPARB</name>
+    <hobbits>
+        <hobbit>play a game</hobbit>
+        <hobbit>watch TV</hobbit>
+    </hobbits>
+    <sports>
+        <sport>football</sport>
+        <sport>ping pong</sport>
+    </sports>
+</student>
