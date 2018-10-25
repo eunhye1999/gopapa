@@ -25,7 +25,7 @@ def getResultformDB(results):
 class AirCondition(ServiceBase):
     
     @rpc(_returns=String)
-    def getData(ctx):
+    def getDataTest(ctx):
         string ="""
         <note>
             <to>Tove</to>
@@ -33,6 +33,24 @@ class AirCondition(ServiceBase):
             <heading>Reminder</heading>
             <body>Don't forget me this weekend!</body>
         </note>
+        """
+        return "test"
+    
+    @rpc(_returns=String)
+    def getmydetail(ctx):
+        string ="""
+        <student>
+            <id>5801012610091</id>
+            <name>PUNTAKARN KUTPARB</name>
+            <hobbits>
+                <hobbit>play a game</hobbit>
+                <hobbit>watch TV</hobbit>
+            </hobbits>
+            <sports>
+                <sport>football</sport>
+                <sport>ping pong</sport>
+            </sports>
+        </student>
         """
         return string
 
