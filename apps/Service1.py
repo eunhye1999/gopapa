@@ -134,6 +134,7 @@ class KerryService(ServiceBase):
         results = engine.execute(
             f"INSERT INTO kerrystored ('name','address','weight') VALUES ('{name}', '{address}', '{weight}')"
             )
+            
         return "<Result>Finish insertItem</Result>"
 
 def create_app(flask_app):
